@@ -13,7 +13,7 @@ export const QuestionsScreen = ({ results, setResults }) => {
     const [selection, setSelection] = useState(false)
     const [selectedOption, setSelectedOption] = useState('')
     const navigate = useNavigate()
-    const [totalScore, setTotalScore] = useState(0)
+    // const [totalScore, setTotalScore] = useState(0)
     const [timer, setTimer] = useState(46)
     const [intervalId, setIntervalId] = useState(null)
     const [shuffledChoices, setShuffledChoices] = useState([]);
@@ -32,7 +32,7 @@ export const QuestionsScreen = ({ results, setResults }) => {
 
     useEffect(() => {
         setShuffledChoices(quiz[currentQuestion].quizChoices);
-    }, [currentQuestion])
+    }, [currentQuestion , quiz])
     useEffect(() => {
         const interval = setInterval(() => {
             setTimer((prevCount) => {
@@ -54,7 +54,7 @@ export const QuestionsScreen = ({ results, setResults }) => {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [currentQuestion]);
+    }, [currentQuestion , questions.length , navigate]);
 
 
     const handleChange = (item) => {
@@ -74,8 +74,8 @@ export const QuestionsScreen = ({ results, setResults }) => {
         )
         item === correctAns ? setExtra(true) : setExtra(false)
 
-        const TotalSocre = quiz.length * 5
-        setTotalScore(TotalSocre)
+        // const TotalSocre = quiz.length * 5
+        // setTotalScore(TotalSocre)
         setSelection(!selection)
     }
 
@@ -157,11 +157,6 @@ export const QuestionsScreen = ({ results, setResults }) => {
                 <Button onClick={() => handleSubmit()} style={{ display: selection ? 'initial' : 'none' }} className='nextBtn' >Next Question</Button>
             </div>
             <br />
-            {/* <ProgressBar className='progressBar'>
-                <ProgressBar striped variant="success" now={results.score} key={1} />
-                <ProgressBar variant="warning" now={results.score == 45 && results.failure == 25 ? 10 : 0} key={2} />
-                <ProgressBar striped variant="danger" now={results.failure} key={3} />
-            </ProgressBar> */}
             <div className="progress-container">
         <div
           style={{
