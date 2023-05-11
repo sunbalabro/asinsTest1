@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { quizData } from '../../QuizData/questions'
 import { useNavigate } from 'react-router-dom'
-import { Button, ProgressBar } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import { Col, Progress, Row } from 'antd';
 import 'antd/dist/reset.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -60,7 +60,7 @@ export const QuestionsScreen = ({ results, setResults }) => {
     const handleChange = (item) => {
         setSelectedOption(item)
         setResults((prev) =>
-            item == correctAns
+            item === correctAns
                 ? {
                     ...prev,
                     score: prev.score + 5,
@@ -72,7 +72,7 @@ export const QuestionsScreen = ({ results, setResults }) => {
                     failure: prev.failure + 5,
                 }
         )
-        item == correctAns ? setExtra(true) : setExtra(false)
+        item === correctAns ? setExtra(true) : setExtra(false)
 
         const TotalSocre = quiz.length * 5
         setTotalScore(TotalSocre)
@@ -138,7 +138,7 @@ export const QuestionsScreen = ({ results, setResults }) => {
                             <button
                                 key={index} onClick={() => handleChange(item)} style={{
                                     backgroundColor: extra === null ? "white" : (
-                                        item == selectedOption ? (extra ? "#40ff00" : "red") : (
+                                        item === selectedOption ? (extra ? "#40ff00" : "red") : (
                                             questions[currentQuestion].correct_answer === item ? "#40ff00" : "white"
                                         )
                                     )
@@ -151,7 +151,7 @@ export const QuestionsScreen = ({ results, setResults }) => {
                 }
             </Row>
             <br />
-            {extra !== null ? (extra == true ? (<h1 className='crAns'>Correct!</h1>) : (<h1 className='wrAns'>Sorry!</h1>)) : ''}
+            {extra !== null ? (extra === true ? (<h1 className='crAns'>Correct!</h1>) : (<h1 className='wrAns'>Sorry!</h1>)) : ''}
             <br />
             <div className='nextContainer'>
                 <Button onClick={() => handleSubmit()} style={{ display: selection ? 'initial' : 'none' }} className='nextBtn' >Next Question</Button>
