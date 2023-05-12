@@ -8,12 +8,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../Styles/index.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock, faStar } from '@fortawesome/free-solid-svg-icons';
+import { ResultProgress } from '../ResultProgress';
 export const QuestionsScreen = ({ results, setResults }) => {
     const [currentQuestion, setCurrentQuestion] = useState(0)
     const [selection, setSelection] = useState(false)
+    const [clicked , setClicked] = useState(false)
     const [selectedOption, setSelectedOption] = useState('')
     const navigate = useNavigate()
-    // const [totalScore, setTotalScore] = useState(0)
+    let [currentPer, setCurrentPer] = useState(0)
+    let [maxPer, setMaxPer] = useState(100)
+    let [minPer, setMinPer] = useState(0)
     const [timer, setTimer] = useState(46)
     const [intervalId, setIntervalId] = useState(null)
     const [shuffledChoices, setShuffledChoices] = useState([]);
@@ -29,10 +33,30 @@ export const QuestionsScreen = ({ results, setResults }) => {
             quizCorrectAnswer: item.correct_answer,
         }
     })
+    const data = [
+        {
+            val: 100,
+            color: 'green',
 
+        },
+        {
+            val: currentPer,
+            color: 'yellow',
+
+        },
+        {
+            val: maxPer,
+            color: "orange",
+
+        },
+        {
+            val: minPer,
+            color: 'red'
+        }
+    ]
     useEffect(() => {
         setShuffledChoices(quiz[currentQuestion].quizChoices);
-    }, [currentQuestion , quiz])
+    }, [currentQuestion])
     useEffect(() => {
         const interval = setInterval(() => {
             setTimer((prevCount) => {
@@ -54,10 +78,11 @@ export const QuestionsScreen = ({ results, setResults }) => {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [currentQuestion , questions.length , navigate]);
+    }, [currentQuestion]);
 
 
     const handleChange = (item) => {
+        setClicked(true)
         setSelectedOption(item)
         setResults((prev) =>
             item === correctAns
@@ -74,12 +99,14 @@ export const QuestionsScreen = ({ results, setResults }) => {
         )
         item === correctAns ? setExtra(true) : setExtra(false)
 
-        // const TotalSocre = quiz.length * 5
-        // setTotalScore(TotalSocre)
         setSelection(!selection)
+        setMinPer(results.correctAnswers * 100 / questions.length)
+        setCurrentPer(results.correctAnswers * 100  / (currentQuestion))
+        setMaxPer((results.correctAnswers + (questions.length - (currentQuestion))) * 100 / questions.length)
     }
 
     const handleSubmit = () => {
+        setClicked(false)
         setSelectedOption('')
         if (currentQuestion !== questions.length - 1) {
             setCurrentQuestion(currentQuestion + 1)
@@ -95,17 +122,7 @@ export const QuestionsScreen = ({ results, setResults }) => {
             navigate('/results')
         }
     }
-    const passingPercentage = (results.correctAnswers / questions.length)*100
-  const precentage = passingPercentage;
-  const computerPercentage = precentage + 5;  
-  const redPercentage = computerPercentage > 53 ? 53 : computerPercentage;
-  const orangePercentage =
-    computerPercentage > 68 ? 68 - 50 : computerPercentage - 50;
-  const yellowPercentage =
-    computerPercentage > 78 ? 78 - 65 : computerPercentage - 65;
-  const greenPercentage =
-    computerPercentage > 103 ? 103 - 75 : computerPercentage - 75;
-    return (
+      return (
         <div className='quizContainer'>
             <Progress percent={currentQuestion / questions.length * 100} className='topProgress' showInfo={false} />
             <Row>
@@ -142,7 +159,7 @@ export const QuestionsScreen = ({ results, setResults }) => {
                                             questions[currentQuestion].correct_answer === item ? "#40ff00" : "white"
                                         )
                                     )
-                                }} >
+                                }}  disabled={clicked} >
                                 {decodeURIComponent(item)}
                             </button>
                         </Col>
@@ -157,38 +174,17 @@ export const QuestionsScreen = ({ results, setResults }) => {
                 <Button onClick={() => handleSubmit()} style={{ display: selection ? 'initial' : 'none' }} className='nextBtn' >Next Question</Button>
             </div>
             <br />
-            <div className="progress-container">
-        <div
-          style={{
-            width: redPercentage + "%"
-          }}
-          className="progressInner progress-red"
-        />
-        {precentage > 50 && (
-          <div
-            style={{
-              width: orangePercentage + "%"
-            }}
-            className="progressInner progress-orange"
-          />
-        )}
-        {precentage > 65 && (
-          <div
-            style={{
-              width: yellowPercentage + "%"
-            }}
-            className="progressInner progress-yellow"
-          />
-        )}
-        {precentage >= 75 && (
-          <div
-            style={{
-              width: greenPercentage + "%"
-            }}
-            className="progressInner progress-green"
-          />
-        )}
-      </div>
+            <div className='progressContainer'>
+                <div>
+                    <div style={{ display: "flex", flexDirection: "row", marginBottom: "5px", marginLeft: "25px", marginRight: "50px", justifyContent: "space-between" }}>
+                        <span>Score : {results.score}%</span>
+                        <span>Max Score : {maxPer}%</span>
+                    </div>
+                    <ResultProgress data={data.sort((x, y) => y.val - x.val)} />
+                </div>
+            </div>
+            
+            
 
 
         </div>
